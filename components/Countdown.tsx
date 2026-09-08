@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-
-// Update this each month to the next call's date and time.
-const NEXT_CALL_ISO = "2026-09-22T19:00:00";
+import { useSiteData } from "@/hooks/use-site-data";
+import { getNextCallDate } from "@/lib/site-data";
 
 function useCountdown(targetISO: string) {
   const target = useMemo(() => new Date(targetISO).getTime(), [targetISO]);
@@ -26,8 +25,10 @@ function useCountdown(targetISO: string) {
 }
 
 export default function Countdown() {
-  const { days, hours, minutes, seconds, isPast } = useCountdown(NEXT_CALL_ISO);
-  const callDate = new Date(NEXT_CALL_ISO);
+  const { data } = useSiteData();
+  const callDate = useMemo(() => getNextCallDate(data), [data]);
+  const nextCallISO = callDate.toISOString();
+  const { days, hours, minutes, seconds, isPast } = useCountdown(nextCallISO);
   const dateLabel = callDate.toLocaleDateString(undefined, {
     weekday: "long",
     month: "long",

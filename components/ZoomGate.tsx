@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { zoomInfo, portalPasscode } from "@/lib/zoom";
+import { useSiteData } from "@/hooks/use-site-data";
 
 export default function ZoomGate() {
+  const { data } = useSiteData();
   const [input, setInput] = useState("");
   const [unlocked, setUnlocked] = useState(false);
   const [error, setError] = useState("");
@@ -11,7 +12,7 @@ export default function ZoomGate() {
 
   const handleUnlock = (event: React.FormEvent) => {
     event.preventDefault();
-    if (input.trim().toLowerCase() === portalPasscode) {
+    if (input.trim().toLowerCase() === data.portalPasscode.toLowerCase()) {
       setUnlocked(true);
       setError("");
     } else {
@@ -73,9 +74,9 @@ export default function ZoomGate() {
 
       <div className="mt-10 flex flex-col gap-3">
         {[
-          { key: "link", label: "Meeting link", value: zoomInfo.link },
-          { key: "id", label: "Meeting ID", value: zoomInfo.meetingId },
-          { key: "code", label: "Passcode", value: zoomInfo.passcode },
+          { key: "link", label: "Meeting link", value: data.zoomInfo.link },
+          { key: "id", label: "Meeting ID", value: data.zoomInfo.meetingId },
+          { key: "code", label: "Passcode", value: data.zoomInfo.passcode },
         ].map((row) => (
           <div
             key={row.key}
@@ -101,7 +102,7 @@ export default function ZoomGate() {
 
       <div className="mt-8 flex justify-center">
         <a
-          href={zoomInfo.link}
+          href={data.zoomInfo.link}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 font-mono text-sm uppercase tracking-widest text-surface transition-opacity hover:opacity-90"

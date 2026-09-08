@@ -13,6 +13,23 @@ npm run dev
 
 Then open http://localhost:3000.
 
+## Deploy with Vercel Blob
+
+1. Create a Vercel project from this repository and deploy it.
+2. In the Vercel project, open **Storage**, create a Blob store, and connect it
+  to the project.
+3. Make sure the store's `BLOB_READ_WRITE_TOKEN` is available in the Preview
+  and Production environments, then redeploy.
+
+The site data API stores its JSON in a private Blob at
+`brownfaloon/site-data.json`. Local browser storage is only used as a fallback
+when the API is unavailable.
+
+The admin passcode is currently a browser-side family gate, not server-side
+authentication. Protect the `/admin` route and `/api/site-data` write/delete
+operations with real server authentication before using this for sensitive
+content.
+
 ## Where things live
 
 - `app/` — one route per page (`/`, `/schedule`, `/recipes`, `/zoom`, `/gallery`).
@@ -21,19 +38,14 @@ Then open http://localhost:3000.
 
 ## Updating each month
 
-- **New host / new drink**: edit `lib/roster.ts` (bump `currentMonthIndex`)
-  and `lib/recipes.ts` (update `currentDrink`, move last month's into
-  `archive`).
-- **Next call date**: edit `NEXT_CALL_ISO` at the top of
-  `components/Countdown.tsx`.
-- **Zoom link/ID/passcode**: edit `lib/zoom.ts`. `portalPasscode` is the
-  family passcode that unlocks the `/zoom` page — this is a friendly
-  speed-bump, not real security, since it all runs in the browser.
+Use `/admin` to update the roster, recipe, archive, Zoom details, and countdown
+data. Changes are saved through the Blob-backed API and shared across deployed
+visitors.
 
 ## Notes
 
 - The Zoom Portal gate and the Gallery upload are client components
   (`"use client"`) since they hold interactive state; everything else is a
   server component, same split the portfolio uses.
-- Gallery uploads only last for the current browser session — there's no
-  storage wired up yet. Say the word if you want that made persistent.
+- Gallery uploads only last for the current browser session; gallery storage is
+  not wired up yet.

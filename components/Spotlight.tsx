@@ -1,8 +1,13 @@
+"use client";
+
 import Link from "next/link";
-import { currentHost } from "@/lib/roster";
-import { currentDrink } from "@/lib/recipes";
+import { useSiteData } from "@/hooks/use-site-data";
 
 export default function Spotlight() {
+  const { data } = useSiteData();
+  const { roster, currentMonthIndex, currentDrink } = data;
+  const currentHost = roster[currentMonthIndex] ?? roster[0];
+
   return (
     <section id="spotlight" className="border-t border-line px-6 py-24">
       <div className="mx-auto max-w-content">

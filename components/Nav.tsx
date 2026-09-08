@@ -9,6 +9,7 @@ const links = [
   { href: "/recipes", label: "bar cart" },
   { href: "/zoom", label: "zoom portal" },
   { href: "/gallery", label: "gallery" },
+  { href: "/admin", label: "admin" },
 ];
 
 export default function Nav() {

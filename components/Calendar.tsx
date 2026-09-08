@@ -1,7 +1,12 @@
-import { roster, currentMonthIndex, year } from "@/lib/roster";
+"use client";
+
 import MonthCalendar from "@/components/MonthCalendar";
+import { useSiteData } from "@/hooks/use-site-data";
 
 export default function Calendar() {
+  const { data } = useSiteData();
+  const { roster, currentMonthIndex, year } = data;
+
   return (
     <section
       id="lineup"
@@ -21,7 +26,7 @@ export default function Calendar() {
       <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {roster.map((entry, index) => (
           <MonthCalendar
-            key={entry.month}
+            key={`${entry.month}-${entry.host}`}
             month={entry.month}
             monthIndex={entry.monthIndex}
             year={year}

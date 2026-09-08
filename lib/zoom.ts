@@ -1,8 +1,4 @@
-export const zoomInfo = {
-  link: "https://zoom.us/j/0000000000",
-  meetingId: "000 0000 0000",
-  passcode: "flannel",
-};
+import { readSiteData } from "@/lib/site-data";
 
-// Ask Mom if you forgot it. This is client-side only — see the note on the Zoom page.
-export const portalPasscode = "brownfaloon";
+export const zoomInfo = readSiteData().zoomInfo;
+export const portalPasscode = readSiteData().portalPasscode;

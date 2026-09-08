@@ -1,6 +1,11 @@
-import { currentDrink } from "@/lib/recipes";
+"use client";
+
+import { useSiteData } from "@/hooks/use-site-data";
 
 export default function RecipeCard() {
+  const { data } = useSiteData();
+  const { currentDrink } = data;
+
   return (
     <section
       id="current"
@@ -47,7 +52,7 @@ export default function RecipeCard() {
             </h3>
             <ol className="mt-4 flex flex-col gap-3">
               {currentDrink.steps.map((step, index) => (
-                <li key={step} className="flex gap-3 text-sm leading-relaxed text-ink">
+                <li key={`${step}-${index}`} className="flex gap-3 text-sm leading-relaxed text-ink">
                   <span className="font-display font-semibold text-gold">
                     {index + 1}
                   </span>

@@ -1,6 +1,10 @@
-import { archive } from "@/lib/recipes";
+"use client";
+
+import { useSiteData } from "@/hooks/use-site-data";
 
 export default function Archive() {
+  const { data } = useSiteData();
+
   return (
     <section id="archive" className="border-t border-line px-6 py-24">
       <div className="mx-auto max-w-content">
@@ -12,7 +16,7 @@ export default function Archive() {
         </h2>
 
         <div className="mt-10 flex flex-col gap-3">
-          {archive.map((entry) => (
+          {data.archive.map((entry) => (
             <div
               key={`${entry.month}-${entry.drink}`}
               className="rounded-xl border border-line bg-surface px-5 py-4"
