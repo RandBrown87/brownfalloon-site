@@ -22,8 +22,10 @@ Then open http://localhost:3000.
   and Production environments, then redeploy.
 
 The site data API stores its JSON in a private Blob at
-`brownfaloon/site-data.json`. Local browser storage is only used as a fallback
-when the API is unavailable.
+`brownfaloon/site-data.json`. Gallery images are stored in the same Blob store
+under `brownfaloon/gallery/`, with a private `gallery/index.json` manifest.
+Local browser storage is only used as a fallback when the site data API is
+unavailable.
 
 The admin passcode is currently a browser-side family gate, not server-side
 authentication. Protect the `/admin` route and `/api/site-data` write/delete
@@ -47,5 +49,6 @@ visitors.
 - The Zoom Portal gate and the Gallery upload are client components
   (`"use client"`) since they hold interactive state; everything else is a
   server component, same split the portfolio uses.
-- Gallery uploads only last for the current browser session; gallery storage is
-  not wired up yet.
+- Gallery uploads are shared through Vercel Blob. The current gallery API does
+  not yet have server-side user authentication, so treat uploaded photos as
+  family content rather than sensitive files.

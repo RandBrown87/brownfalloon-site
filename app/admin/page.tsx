@@ -17,6 +17,8 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [error, setError] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     setDraft(data);
@@ -62,7 +64,17 @@ export default function AdminPage() {
   };
 
   const handleSave = async () => {
-    await updateData(draft);
+    setIsSaving(true);
+    setSaveMessage("");
+
+    try {
+      await updateData(draft);
+      setSaveMessage("Changes saved.");
+    } catch (saveError) {
+      setSaveMessage(saveError instanceof Error ? saveError.message : "Changes could not be saved.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleReset = async () => {
@@ -122,10 +134,10 @@ export default function AdminPage() {
       <div className="mt-8 flex flex-wrap gap-3">
         <button
           onClick={handleSave}
-          disabled={saveDisabled}
+          disabled={saveDisabled || isSaving}
           className="rounded-full bg-accent px-6 py-3 font-mono text-xs uppercase tracking-widest text-surface disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Save changes
+          {isSaving ? "Saving..." : "Save changes"}
         </button>
         <button
           onClick={handleReset}
@@ -134,6 +146,7 @@ export default function AdminPage() {
           Reset to defaults
         </button>
       </div>
+      <p className="mt-3 min-h-[1.2em] text-sm text-muted">{saveMessage}</p>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <div className="rounded-2xl border border-line bg-surface p-6">

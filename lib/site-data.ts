@@ -240,14 +240,14 @@ export const writeSiteData = async (data: SiteData) => {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to save site data");
+      const result = (await response.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(result?.error ?? "Failed to save site data");
     }
 
     window.localStorage.setItem(CONTENT_STORAGE_KEY, JSON.stringify(data));
     window.dispatchEvent(new Event(CONTENT_UPDATED_EVENT));
-  } catch {
-    window.localStorage.setItem(CONTENT_STORAGE_KEY, JSON.stringify(data));
-    window.dispatchEvent(new Event(CONTENT_UPDATED_EVENT));
+  } catch (error) {
+    throw error instanceof Error ? error : new Error("Failed to save site data");
   }
 };
 

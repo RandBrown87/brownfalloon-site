@@ -33,6 +33,7 @@ export async function PUT(request: NextRequest) {
     const blob = await put(BLOB_PATH, data, {
       access: "private",
       contentType: "application/json",
+      allowOverwrite: true,
     });
 
     return NextResponse.json({ ok: true, url: blob.url, pathname: blob.pathname }, { status: 200 });

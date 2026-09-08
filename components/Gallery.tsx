@@ -1,23 +1,50 @@
 "use client";
 
 import { useState } from "react";
+import { useEffect } from "react";
 
 type Photo = {
+  pathname: string;
   url: string;
   caption: string;
 };
 
 export default function Gallery() {
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleFiles = (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    fetch("/api/gallery", { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : []))
+      .then(setPhotos)
+      .catch(() => setError("The shared gallery could not be loaded."));
+  }, []);
+
+  const handleFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
-    const next = files.map((file) => ({
-      url: URL.createObjectURL(file),
-      caption: file.name.replace(/\.[^/.]+$/, ""),
-    }));
-    setPhotos((prev) => [...next, ...prev]);
     event.target.value = "";
+
+    if (files.length === 0) return;
+    setIsUploading(true);
+    setError("");
+
+    try {
+      const uploaded = await Promise.all(
+        files.map(async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+          const response = await fetch("/api/gallery", { method: "POST", body: formData });
+          if (!response.ok) throw new Error("Upload failed");
+          return (await response.json()) as Photo;
+        }),
+      );
+      setPhotos((prev) => [...uploaded, ...prev]);
+    } catch {
+      setError("One or more photos could not be uploaded.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -36,7 +63,7 @@ export default function Gallery() {
       <div className="mt-10 rounded-2xl border-2 border-dashed border-line bg-surface/60 p-10 text-center">
         <p className="text-sm text-muted">Add a photo from this month&apos;s call.</p>
         <label className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-full bg-accent px-6 py-3 font-mono text-xs uppercase tracking-widest text-surface transition-opacity hover:opacity-90">
-          Add photos
+          {isUploading ? "Uploading..." : "Add photos"}
           <input
             type="file"
             accept="image/*"
@@ -46,6 +73,8 @@ export default function Gallery() {
           />
         </label>
       </div>
+
+      <p className="mt-3 min-h-[1.2em] text-center text-sm text-rust">{error}</p>
 
       {photos.length === 0 ? (
         <p className="mt-10 text-center text-sm text-muted">
@@ -73,8 +102,7 @@ export default function Gallery() {
       )}
 
       <p className="mt-8 text-center font-mono text-xs text-muted">
-        Photos added here only stay on your own screen for this visit — no
-        shared storage is wired up yet.
+        Photos are shared with the family through Vercel Blob storage.
       </p>
     </section>
   );
