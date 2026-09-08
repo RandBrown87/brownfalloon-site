@@ -59,6 +59,7 @@ export async function DELETE() {
 
 const defaultSiteData = {
   year: 2026,
+  callTime: "19:00",
   currentMonthIndex: 9,
   roster: [
     { month: "January", monthIndex: 0, day: 10, host: "Rand", note: "xxxx" },

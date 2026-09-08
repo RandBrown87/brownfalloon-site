@@ -11,6 +11,12 @@ const parseNumberInput = (value: string, fallback: number) => {
   return Number.isNaN(parsed) ? fallback : parsed;
 };
 
+const selectInputValue = (
+  event: React.FocusEvent<HTMLInputElement> | React.MouseEvent<HTMLInputElement>,
+) => {
+  event.currentTarget.select();
+};
+
 export default function AdminPage() {
   const { data, updateData, resetData } = useSiteData();
   const [draft, setDraft] = useState(data);
@@ -128,10 +134,10 @@ export default function AdminPage() {
         Edit the site content.
       </h1>
       <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
-        This updates the local browser data used by the recipes, calendar, and Zoom pages.
+        Update the shared calendar, recipe, archive, and Zoom details. Changes apply to everyone after you save.
       </p>
 
-      <div className="mt-8 flex flex-wrap gap-3">
+      <div className="mt-8 flex flex-wrap items-center gap-3">
         <button
           onClick={handleSave}
           disabled={saveDisabled || isSaving}
@@ -146,35 +152,58 @@ export default function AdminPage() {
           Reset to defaults
         </button>
       </div>
-      <p className="mt-3 min-h-[1.2em] text-sm text-muted">{saveMessage}</p>
+      <p className={`mt-3 min-h-[1.2em] text-sm ${saveMessage === "Changes saved." ? "text-accent" : "text-rust"}`}>
+        {saveMessage}
+      </p>
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-2">
-        <div className="rounded-2xl border border-line bg-surface p-6">
+      <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        <div className="rounded-2xl border border-line bg-surface p-6 lg:p-8">
           <h2 className="font-display text-2xl text-ink">Calendar</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            Set the year, call time, and hosting rotation shown on the homepage and schedule.
+          </p>
           <div className="mt-4 space-y-3">
-            <label className="block text-sm text-muted">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="block text-sm text-muted">
               Year
               <input
-                type="number"
+                type="text"
                 inputMode="numeric"
                 value={draft.year}
+                onFocus={selectInputValue}
+                onClick={selectInputValue}
                 onChange={(event) => updateField("year", parseNumberInput(event.target.value, 2026))}
                 className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 text-ink"
               />
-            </label>
+              </label>
+              <label className="block text-sm text-muted">
+                Call time
+                <input
+                  type="time"
+                  value={draft.callTime}
+                  onChange={(event) => updateField("callTime", event.target.value)}
+                  className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 text-ink"
+                />
+                <span className="mt-1 block text-xs text-muted">Used by the countdown.</span>
+              </label>
+            </div>
             <label className="block text-sm text-muted">
               Current month index
               <input
-                type="number"
+                type="text"
                 inputMode="numeric"
                 value={draft.currentMonthIndex}
+                onFocus={selectInputValue}
+                onClick={selectInputValue}
                 onChange={(event) => updateField("currentMonthIndex", parseNumberInput(event.target.value, 0))}
                 className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 text-ink"
               />
+              <span className="mt-1 block text-xs text-muted">January is 0, February is 1, and December is 11.</span>
             </label>
-            <div className="max-h-80 space-y-3 overflow-auto pr-1">
+            <div className="max-h-[42rem] space-y-3 overflow-auto pr-1">
               {draft.roster.map((month, index) => (
                 <div key={`${month.month}-${index}`} className="rounded-xl border border-line bg-bg p-3">
+                  <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-muted">Month {index + 1}</p>
                   <div className="grid gap-2 md:grid-cols-2">
                     <input
                       value={month.month}
@@ -197,9 +226,11 @@ export default function AdminPage() {
                   </div>
                   <div className="mt-2 grid gap-2 md:grid-cols-3">
                     <input
-                      type="number"
+                      type="text"
                       inputMode="numeric"
                       value={month.monthIndex}
+                      onFocus={selectInputValue}
+                      onClick={selectInputValue}
                       onChange={(event) => {
                         const next = [...draft.roster];
                         next[index] = { ...next[index], monthIndex: parseNumberInput(event.target.value, 0) };
@@ -208,9 +239,11 @@ export default function AdminPage() {
                       className="rounded-lg border border-line bg-surface px-3 py-2 text-ink"
                     />
                     <input
-                      type="number"
+                      type="text"
                       inputMode="numeric"
                       value={month.day}
+                      onFocus={selectInputValue}
+                      onClick={selectInputValue}
                       onChange={(event) => {
                         const next = [...draft.roster];
                         next[index] = { ...next[index], day: parseNumberInput(event.target.value, 1) };

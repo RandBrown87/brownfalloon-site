@@ -31,6 +31,7 @@ export type ZoomInfo = {
 
 export type SiteData = {
   year: number;
+  callTime: string;
   currentMonthIndex: number;
   roster: HostMonth[];
   currentDrink: CurrentDrink;
@@ -116,6 +117,7 @@ export const defaultPortalPasscode = "Randisthebest";
 
 export const defaultSiteData: SiteData = {
   year: 2026,
+  callTime: "19:00",
   currentMonthIndex: 9,
   roster: defaultRoster,
   currentDrink: defaultCurrentDrink,
@@ -126,8 +128,9 @@ export const defaultSiteData: SiteData = {
 
 export const getNextCallDate = (data: SiteData): Date => {
   const now = new Date();
+  const [hours, minutes] = (data.callTime || defaultSiteData.callTime).split(":").map(Number);
   const candidates = data.roster
-    .map((entry) => new Date(data.year, entry.monthIndex, entry.day, 19, 0, 0))
+    .map((entry) => new Date(data.year, entry.monthIndex, entry.day, hours || 0, minutes || 0, 0))
     .sort((a, b) => a.getTime() - b.getTime());
 
   const upcoming = candidates.find((date) => date.getTime() >= now.getTime());
@@ -136,7 +139,14 @@ export const getNextCallDate = (data: SiteData): Date => {
     return upcoming;
   }
 
-  const firstInNextYear = new Date(data.year + 1, data.roster[0]?.monthIndex ?? 0, data.roster[0]?.day ?? 1, 19, 0, 0);
+  const firstInNextYear = new Date(
+    data.year + 1,
+    data.roster[0]?.monthIndex ?? 0,
+    data.roster[0]?.day ?? 1,
+    hours || 0,
+    minutes || 0,
+    0,
+  );
   return firstInNextYear;
 };
 
@@ -151,6 +161,7 @@ const safeParse = (raw: string | null): SiteData | null => {
 
     return {
       year: typeof parsed.year === "number" ? parsed.year : defaultSiteData.year,
+      callTime: typeof parsed.callTime === "string" ? parsed.callTime : defaultSiteData.callTime,
       currentMonthIndex:
         typeof parsed.currentMonthIndex === "number"
           ? parsed.currentMonthIndex
@@ -198,6 +209,7 @@ export const fetchSiteData = async (): Promise<SiteData> => {
     const json = (await response.json()) as Partial<SiteData>;
     const merged = {
       year: typeof json.year === "number" ? json.year : defaultSiteData.year,
+      callTime: typeof json.callTime === "string" ? json.callTime : defaultSiteData.callTime,
       currentMonthIndex:
         typeof json.currentMonthIndex === "number"
           ? json.currentMonthIndex
