@@ -50,7 +50,7 @@ export default function ZoomGate() {
               aria-label="Family passcode"
               className="w-full rounded-lg border border-line bg-bg px-4 py-3 text-sm text-ink outline-none"
             />
-            <p className="mt-2 min-h-[1.2em] text-sm text-rust">{error}</p>
+            <p className="mt-2 min-h-[1.2em] text-sm text-accent">{error}</p>
             <button
               type="submit"
               className="mt-2 w-full rounded-full bg-accent px-6 py-3 font-mono text-xs uppercase tracking-widest text-surface transition-opacity hover:opacity-90"

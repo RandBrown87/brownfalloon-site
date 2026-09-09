@@ -39,7 +39,7 @@ export default function RootLayout({
         className={`${display.variable} ${body.variable} ${mono.variable} font-body bg-bg text-ink antialiased`}
       >
         <Nav />
-        <main>{children}</main>
+        <main className="min-h-[100svh]">{children}</main>
         <Footer />
       </body>
     </html>

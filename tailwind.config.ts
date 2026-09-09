@@ -15,7 +15,6 @@ const config: Config = {
         accent: "#D9A93B",
         "accent-soft": "#E9CE99",
         line: "#606C4B",
-        rust: "#8A3F24",
         gold: "#C98A3B",
       },
       fontFamily: {

@@ -49,7 +49,7 @@ export default function Gallery() {
 
   return (
     <section className="mx-auto max-w-content px-6 pb-24 pt-40 lg:pt-48">
-      <p className="font-mono text-xs uppercase tracking-widest text-accent">
+      <p className="font-mono text-xs uppercase tracking-widest text-gold">
         family gallery
       </p>
       <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
@@ -60,8 +60,8 @@ export default function Gallery() {
         here.
       </p>
 
-      <div className="mt-10 rounded-2xl border-2 border-dashed border-line bg-surface/60 p-10 text-center">
-        <p className="text-sm text-muted">Add a photo from this month&apos;s call.</p>
+      <div className="paper-panel mt-10 rounded-2xl border-2 border-dashed border-gold/70 p-10 text-center text-bg">
+        <p className="text-sm text-bg/75">Add a photo from this month&apos;s call.</p>
         <label className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-full bg-accent px-6 py-3 font-mono text-xs uppercase tracking-widest text-surface transition-opacity hover:opacity-90">
           {isUploading ? "Uploading..." : "Add photos"}
           <input
@@ -74,7 +74,7 @@ export default function Gallery() {
         </label>
       </div>
 
-      <p className="mt-3 min-h-[1.2em] text-center text-sm text-rust">{error}</p>
+      <p className="mt-3 min-h-[1.2em] text-center text-sm text-accent">{error}</p>
 
       {photos.length === 0 ? (
         <p className="mt-10 text-center text-sm text-muted">
@@ -83,9 +83,9 @@ export default function Gallery() {
       ) : (
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
           {photos.map((photo, index) => (
-            <div
+              <div
               key={index}
-              className="relative aspect-square overflow-hidden rounded-xl border border-line bg-surface"
+                className="relative aspect-square overflow-hidden rounded-xl border border-gold/50 bg-surface shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

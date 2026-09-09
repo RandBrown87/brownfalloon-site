@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180">
+  <filter id="wood" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.18" numOctaves="2" seed="8"/>
+    <feColorMatrix type="matrix" values="0.28 0 0 0 0.18  0 0.2 0 0 0.14  0 0 0.12 0 0.06  0 0 0 0.24 0"/>
+  </filter>
+  <rect width="320" height="180" fill="#353f27"/>
+  <rect width="320" height="180" filter="url(#wood)" opacity="0.85"/>
+  <path d="M-20 24C45 8 82 40 145 24s98-10 195 6M-20 71c60-16 106 17 168 0s100-12 192 4M-20 126c62-14 106 14 168-1s108-10 192 4M-20 166c66-14 110 12 177-1s103-8 183 3" fill="none" stroke="#d9a93b" stroke-opacity=".11" stroke-width="2"/>
+  <path d="M-20 31c60-12 106 14 167 0s107-9 193 4M-20 136c60-12 106 14 167 0s107-9 193 4" fill="none" stroke="#f4eedd" stroke-opacity=".06"/>
+</svg>

@@ -28,8 +28,8 @@ export default function MonthCalendar({
 
   return (
     <div
-      className={`rounded-2xl border bg-surface p-5 ${
-        isCurrent ? "border-accent" : "border-line"
+      className={`textured-panel rounded-2xl border p-5 ${
+        isCurrent ? "border-line ring-1 ring-line/60" : "border-line"
       }`}
     >
       <div className="flex items-center justify-between">
@@ -37,7 +37,7 @@ export default function MonthCalendar({
           {month}
         </h3>
         {isCurrent && (
-          <span className="rounded-full bg-accent px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-surface">
+          <span className="rounded-full bg-line px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-ink">
             up now
           </span>
         )}
@@ -60,7 +60,7 @@ export default function MonthCalendar({
               key={cellDay}
               className={`mx-auto flex h-6 w-6 items-center justify-center rounded-full text-xs ${
                 cellDay === day
-                  ? "bg-accent font-semibold text-surface"
+                  ? "bg-gold font-semibold text-surface"
                   : "text-muted"
               }`}
             >

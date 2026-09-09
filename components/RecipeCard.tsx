@@ -1,31 +1,39 @@
 "use client";
 
 import { useSiteData } from "@/hooks/use-site-data";
+import { getShopByDate } from "@/lib/site-data";
 
 export default function RecipeCard() {
   const { data } = useSiteData();
   const { currentDrink } = data;
+  const shopByDate = getShopByDate(data);
 
   return (
     <section
       id="current"
       className="mx-auto max-w-content px-6 pb-20 pt-40 lg:pt-48"
     >
-      <p className="font-mono text-xs uppercase tracking-widest text-accent">
+      <div className="flex items-center gap-3 text-accent">
+        <svg className="h-10 w-10" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <path d="M9 8h22L22 20v9l-5 3v-12L9 8Z" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M13 8h14M12 24h16" stroke="currentColor" strokeWidth="1.2" />
+        </svg>
+        <p className="font-mono text-xs uppercase tracking-widest">
         the bar cart
-      </p>
+        </p>
+      </div>
       <h1 className="mt-4 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
         This month&apos;s pour.
       </h1>
 
-      <div className="mt-10 rounded-2xl border border-line bg-surface p-6 sm:p-8">
-        <span className="rounded-full bg-accent-soft px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-rust">
+      <div className="textured-panel relative mt-10 -rotate-[0.35deg] rounded-2xl border border-accent/60 p-6 sm:p-8">
+        <span className="rounded-full bg-accent-soft px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-bg">
           hosted by {currentDrink.host}
         </span>
         <h2 className="mt-4 font-display text-2xl font-semibold text-ink">
           {currentDrink.name}
         </h2>
-        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
+        <p className="mt-3 max-w-xl font-display text-lg italic leading-relaxed text-accent-soft">
           {currentDrink.blurb}
         </p>
 
@@ -63,8 +71,8 @@ export default function RecipeCard() {
           </div>
         </div>
 
-        <span className="mt-8 inline-block rounded-full bg-accent-soft px-4 py-2 font-mono text-xs text-rust">
-          Shop by {currentDrink.shopBy}
+        <span className="mt-8 inline-block rounded-full bg-accent-soft px-4 py-2 font-mono text-xs text-bg">
+          Shop by {shopByDate}
         </span>
       </div>
     </section>

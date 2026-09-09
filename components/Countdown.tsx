@@ -26,6 +26,7 @@ function useCountdown(targetISO: string) {
 
 export default function Countdown() {
   const { data } = useSiteData();
+  const [isPouring, setIsPouring] = useState(false);
   const callDate = useMemo(() => getNextCallDate(data), [data]);
   const nextCallISO = callDate.toISOString();
   const { days, hours, minutes, seconds, isPast } = useCountdown(nextCallISO);
@@ -39,9 +40,14 @@ export default function Countdown() {
     minute: "2-digit",
   });
 
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setIsPouring(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
   if (isPast) {
     return (
-      <div className="mt-10 inline-flex items-center gap-2 rounded-full bg-rust px-5 py-3 font-mono text-xs uppercase tracking-widest text-surface">
+      <div className="mt-10 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 font-mono text-xs uppercase tracking-widest text-surface">
         Live now — join the call
       </div>
     );
@@ -56,11 +62,16 @@ export default function Countdown() {
 
   return (
     <div className="mt-10">
-      <div className="inline-flex gap-4 rounded-2xl border border-line bg-surface/80 px-6 py-4 sm:gap-6">
+      <div className="textured-panel inline-flex gap-4 rounded-2xl border border-line/80 px-6 py-4 sm:gap-6">
         {units.map((unit) => (
           <div key={unit.label} className="text-center">
-            <span className="block font-display text-2xl font-semibold text-ink sm:text-3xl">
-              {String(unit.value).padStart(2, "0")}
+            <span className="block font-display text-3xl font-semibold leading-none text-accent sm:text-5xl">
+              <span
+                className={`countdown-number ${isPouring ? "countdown-number--pouring" : ""}`}
+                style={{ animationDelay: `${units.indexOf(unit) * 110}ms` }}
+              >
+                {String(unit.value).padStart(2, "0")}
+              </span>
             </span>
             <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
               {unit.label}

@@ -18,12 +18,16 @@ export default function Spotlight() {
           {currentHost.host} is pouring this month.
         </h2>
 
-        <div className="mt-10 flex flex-col gap-6 rounded-2xl border border-line bg-surface p-6 sm:flex-row sm:items-center">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent-soft font-display text-xl font-semibold text-rust">
+        <div className="textured-panel relative mt-10 flex flex-col gap-6 rounded-2xl border border-line p-6 sm:flex-row sm:items-center">
+          <svg className="absolute right-5 top-4 h-14 w-14 text-gold/50" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+            <path d="M8 8c12 3 25 2 40-3M8 14c12 3 25 2 40-3" stroke="currentColor" strokeWidth="1.2" />
+            <path d="M43 8c-4 5-5 11-2 17" stroke="currentColor" strokeWidth="1.2" />
+          </svg>
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent-soft font-display text-xl font-semibold text-bg">
             {currentHost.host.charAt(0)}
           </div>
           <div>
-            <span className="rounded-full bg-accent-soft px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-rust">
+            <span className="rounded-full bg-accent-soft px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-bg">
               {currentHost.month} host
             </span>
             <p className="mt-3 text-base leading-relaxed text-muted">

@@ -19,7 +19,7 @@ export default function Archive() {
           {data.archive.map((entry) => (
             <div
               key={`${entry.month}-${entry.drink}`}
-              className="rounded-xl border border-line bg-surface px-5 py-4"
+              className="archive-slip textured-panel rounded-xl border border-line px-5 py-4"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <span className="font-mono text-[11px] uppercase tracking-widest text-muted">
