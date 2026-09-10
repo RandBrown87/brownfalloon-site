@@ -74,7 +74,16 @@ export default function AdminPage() {
     setSaveMessage("");
 
     try {
-      await updateData(draft);
+      const normalizedDraft = {
+        ...draft,
+        currentDrink: {
+          ...draft.currentDrink,
+          ingredients: draft.currentDrink.ingredients.map((item) => item.trim()).filter(Boolean),
+          steps: draft.currentDrink.steps.map((item) => item.trim()).filter(Boolean),
+        },
+      };
+      setDraft(normalizedDraft);
+      await updateData(normalizedDraft);
       setSaveMessage("Changes saved.");
     } catch (saveError) {
       setSaveMessage(saveError instanceof Error ? saveError.message : "Changes could not be saved.");
@@ -306,7 +315,7 @@ export default function AdminPage() {
               Ingredients (one per line)
               <textarea
                 value={draft.currentDrink.ingredients.join("\n")}
-                onChange={(event) => updateDrinkField("ingredients", event.target.value.split("\n").map((item) => item.trim()).filter(Boolean))}
+                onChange={(event) => updateDrinkField("ingredients", event.target.value.split("\n"))}
                 className="mt-1 min-h-[90px] w-full rounded-lg border border-line bg-bg px-3 py-2 text-ink"
               />
             </label>
@@ -314,7 +323,7 @@ export default function AdminPage() {
               Steps (one per line)
               <textarea
                 value={draft.currentDrink.steps.join("\n")}
-                onChange={(event) => updateDrinkField("steps", event.target.value.split("\n").map((item) => item.trim()).filter(Boolean))}
+                onChange={(event) => updateDrinkField("steps", event.target.value.split("\n"))}
                 className="mt-1 min-h-[90px] w-full rounded-lg border border-line bg-bg px-3 py-2 text-ink"
               />
             </label>

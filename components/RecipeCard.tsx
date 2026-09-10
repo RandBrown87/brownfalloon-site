@@ -49,7 +49,7 @@ export default function RecipeCard() {
                   className="flex gap-2 text-sm leading-relaxed text-ink"
                 >
                   <span className="text-accent">&bull;</span>
-                  {ingredient}
+                  <span className="min-w-0 whitespace-pre-wrap break-words">{ingredient}</span>
                 </li>
               ))}
             </ul>
@@ -64,7 +64,7 @@ export default function RecipeCard() {
                   <span className="font-display font-semibold text-gold">
                     {index + 1}
                   </span>
-                  {step}
+                  <span className="min-w-0 whitespace-pre-wrap break-words">{step}</span>
                 </li>
               ))}
             </ol>
