@@ -2,11 +2,13 @@ import { del, get, put } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
 
 const BLOB_PATH = "brownfaloon/site-data.json";
+const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
 
 export async function GET() {
   try {
     const blob = await get(BLOB_PATH, {
       access: "private",
+      token: blobToken,
     });
 
     if (!blob) {
@@ -34,6 +36,7 @@ export async function PUT(request: NextRequest) {
       access: "private",
       contentType: "application/json",
       allowOverwrite: true,
+      token: blobToken,
     });
 
     return NextResponse.json({ ok: true, url: blob.url, pathname: blob.pathname }, { status: 200 });
@@ -47,7 +50,7 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE() {
   try {
-    await del(BLOB_PATH);
+    await del(BLOB_PATH, { token: blobToken });
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
