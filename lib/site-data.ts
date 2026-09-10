@@ -131,30 +131,18 @@ export const getNextCallDate = (data: SiteData): Date => {
 };
 
 export const getNextCall = (data: SiteData): { entry: HostMonth; date: Date } => {
-  const now = new Date();
+  const entry = data.roster[data.currentMonthIndex] ?? data.roster[0] ?? defaultRoster[0];
   const [hours, minutes] = (data.callTime || defaultSiteData.callTime).split(":").map(Number);
-  const candidates = data.roster
-    .map((entry) => ({
-      entry,
-      date: new Date(data.year, entry.monthIndex, entry.day, hours || 0, minutes || 0, 0),
-    }))
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
-
-  const upcoming = candidates.find((candidate) => candidate.date.getTime() >= now.getTime());
-
-  if (upcoming) {
-    return upcoming;
-  }
 
   return {
-    entry: data.roster[0] ?? defaultRoster[0],
+    entry,
     date: new Date(
-    data.year + 1,
-    data.roster[0]?.monthIndex ?? 0,
-    data.roster[0]?.day ?? 1,
-    hours || 0,
-    minutes || 0,
-    0,
+      data.year,
+      entry.monthIndex,
+      entry.day,
+      hours || 0,
+      minutes || 0,
+      0,
     ),
   };
 };
