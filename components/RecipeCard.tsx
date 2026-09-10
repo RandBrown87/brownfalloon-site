@@ -1,12 +1,40 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useSiteData } from "@/hooks/use-site-data";
 import { getShopByDate } from "@/lib/site-data";
 
 export default function RecipeCard() {
-  const { data } = useSiteData();
+  const { data, isLoading } = useSiteData();
+  const [isReady, setIsReady] = useState(false);
   const { currentDrink } = data;
   const shopByDate = getShopByDate(data);
+
+  useEffect(() => {
+    if (isLoading) {
+      setIsReady(false);
+      return;
+    }
+
+    const timeout = window.setTimeout(() => setIsReady(true), 1000);
+    return () => window.clearTimeout(timeout);
+  }, [isLoading]);
+
+  if (isLoading || !isReady) {
+    return (
+      <section
+        id="current"
+        className="mx-auto max-w-content px-6 pb-20 pt-40 lg:pt-48"
+      >
+        <div
+          className="flex min-h-[420px] animate-pulse items-center justify-center rounded-2xl border border-line/80 bg-surface/40 font-mono text-xs uppercase tracking-widest text-muted"
+          aria-label="Loading recipe"
+        >
+          Loading...
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
