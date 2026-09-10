@@ -25,7 +25,7 @@ function useCountdown(targetISO: string) {
 }
 
 export default function Countdown() {
-  const { data } = useSiteData();
+  const { data, isLoading } = useSiteData();
   const [isPouring, setIsPouring] = useState(false);
   const callDate = useMemo(() => getNextCallDate(data), [data]);
   const nextCallISO = callDate.toISOString();
@@ -44,6 +44,10 @@ export default function Countdown() {
     const frame = requestAnimationFrame(() => setIsPouring(true));
     return () => cancelAnimationFrame(frame);
   }, []);
+
+  if (isLoading) {
+    return <div className="mt-10 h-[106px] w-full max-w-[360px] animate-pulse rounded-2xl border border-line/80 bg-surface/40" aria-label="Loading countdown" />;
+  }
 
   if (isPast) {
     return (

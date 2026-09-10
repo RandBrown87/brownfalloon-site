@@ -12,10 +12,15 @@ import {
 
 export function useSiteData() {
   const [data, setData] = useState<SiteData>(defaultSiteData);
+  const [isLoading, setIsLoading] = useState(true);
 
   const refresh = useCallback(async () => {
-    const next = await fetchSiteData();
-    setData(next);
+    try {
+      const next = await fetchSiteData();
+      setData(next);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -41,5 +46,5 @@ export function useSiteData() {
     setData(value);
   }, []);
 
-  return { data, updateData, resetData, refresh };
+  return { data, isLoading, updateData, resetData, refresh };
 }
