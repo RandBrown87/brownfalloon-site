@@ -23,7 +23,7 @@ export default function MessageBoard() {
   const [status, setStatus] = useState("");
 
   useEffect(() => {
-    fetch("/api/messages")
+    fetch("/api/messages", { cache: "no-store" })
       .then((response) => response.json())
       .then(setMessages)
       .catch(() => setStatus("Messages could not be loaded."))

@@ -1,11 +1,13 @@
-import { get, put } from "@vercel/blob";
+import { del, get, list, put } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
 import { defaultPortalPasscode } from "@/lib/site-data";
 
+export const dynamic = "force-dynamic";
+
 const MESSAGES_PATH = "brownfaloon/messages.json";
+const MESSAGE_PREFIX = "brownfaloon/messages/";
 const SITE_DATA_PATH = "brownfaloon/site-data.json";
 const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
-const MAX_MESSAGES = 100;
 const MAX_NAME_LENGTH = 40;
 const MAX_MESSAGE_LENGTH = 500;
 
@@ -16,12 +18,50 @@ export type BoardMessage = {
   createdAt: string;
 };
 
-const readMessages = async (): Promise<BoardMessage[]> => {
-  const blob = await get(MESSAGES_PATH, { access: "private", token: blobToken });
-  if (!blob) return [];
+const readLegacyMessages = async (): Promise<BoardMessage[]> => {
+  const legacyBlob = await get(MESSAGES_PATH, {
+    access: "private",
+    token: blobToken,
+    useCache: false,
+  });
+  const legacyMessages = legacyBlob
+    ? JSON.parse(await new Response(legacyBlob.stream).text())
+    : [];
+  return Array.isArray(legacyMessages) ? legacyMessages : [];
+};
 
-  const parsed = JSON.parse(await new Response(blob.stream).text());
-  return Array.isArray(parsed) ? parsed : [];
+const readMessages = async (): Promise<BoardMessage[]> => {
+  const messages: BoardMessage[] = await readLegacyMessages();
+  let cursor: string | undefined;
+
+  do {
+    const result = await list({
+      prefix: MESSAGE_PREFIX,
+      limit: 100,
+      cursor,
+      token: blobToken,
+    });
+
+    for (const blob of result.blobs) {
+      const messageBlob = await get(blob.pathname, {
+        access: "private",
+        token: blobToken,
+        useCache: false,
+      });
+      if (!messageBlob) continue;
+
+      const parsed = JSON.parse(await new Response(messageBlob.stream).text());
+      if (parsed && typeof parsed === "object" && typeof parsed.id === "string") {
+        messages.push(parsed as BoardMessage);
+      }
+    }
+
+    cursor = result.hasMore ? result.cursor : undefined;
+  } while (cursor);
+
+  return messages
+    .sort((first, second) => second.createdAt.localeCompare(first.createdAt))
+    .slice(0, 100);
 };
 
 const isAdminPasscode = async (passcode: string) => {
@@ -60,12 +100,9 @@ export async function POST(request: NextRequest) {
       message,
       createdAt: new Date().toISOString(),
     };
-    const messages = await readMessages();
-
-    await put(MESSAGES_PATH, JSON.stringify([nextMessage, ...messages].slice(0, MAX_MESSAGES)), {
+    await put(`${MESSAGE_PREFIX}${nextMessage.id}.json`, JSON.stringify(nextMessage), {
       access: "private",
       contentType: "application/json",
-      allowOverwrite: true,
       token: blobToken,
     });
 
@@ -85,13 +122,25 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "The admin passcode is not correct." }, { status: 403 });
     }
 
-    const messages = await readMessages();
-    await put(MESSAGES_PATH, JSON.stringify(messages.filter((item) => item.id !== id)), {
-      access: "private",
-      contentType: "application/json",
-      allowOverwrite: true,
+    const storedMessages = await list({
+      prefix: MESSAGE_PREFIX,
+      limit: 100,
       token: blobToken,
     });
+    const storedPath = storedMessages.blobs.find((blob) => blob.pathname === `${MESSAGE_PREFIX}${id}.json`)
+      ?.pathname;
+
+    if (storedPath) {
+      await del(storedPath, { token: blobToken });
+    } else {
+      const messages = await readLegacyMessages();
+      await put(MESSAGES_PATH, JSON.stringify(messages.filter((item) => item.id !== id)), {
+        access: "private",
+        contentType: "application/json",
+        allowOverwrite: true,
+        token: blobToken,
+      });
+    }
 
     return NextResponse.json({ ok: true });
   } catch {
