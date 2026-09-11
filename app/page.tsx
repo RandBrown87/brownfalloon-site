@@ -1,13 +1,11 @@
 import Hero from "@/components/Hero";
-import Spotlight from "@/components/Spotlight";
-import CallToAction from "@/components/CallToAction";
+import MessageBoard from "@/components/MessageBoard";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <Spotlight />
-      <CallToAction />
+      <MessageBoard />
     </>
   );
 }
