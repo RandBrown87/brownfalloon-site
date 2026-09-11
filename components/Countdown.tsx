@@ -84,22 +84,26 @@ export default function Countdown() {
 
   return (
     <div className="mt-10">
-      <div className="textured-panel inline-flex gap-4 rounded-2xl border border-line/80 px-6 py-4 sm:gap-6">
-        {units.map((unit) => (
-          <div key={unit.label} className="text-center">
-            <span className="block font-display text-3xl font-semibold leading-none text-accent sm:text-5xl">
-              <span
-                className={`countdown-number ${isPouring ? "countdown-number--pouring" : ""}`}
-                style={{ animationDelay: `${units.indexOf(unit) * 110}ms` }}
-              >
-                {String(unit.value).padStart(2, "0")}
+      <div className="countdown-display textured-panel inline-flex gap-4 rounded-2xl border border-line/80 px-6 py-4 sm:gap-6">
+        <span className="countdown-stream" aria-hidden="true" />
+        <span className="countdown-liquid" aria-hidden="true" />
+        <span className="countdown-units">
+          {units.map((unit) => (
+            <span key={unit.label} className="text-center">
+              <span className="block font-display text-3xl font-semibold leading-none text-accent sm:text-5xl">
+                <span
+                  className={`countdown-number ${isPouring ? "countdown-number--pouring" : ""}`}
+                  style={{ animationDelay: `${units.indexOf(unit) * 110}ms` }}
+                >
+                  {String(unit.value).padStart(2, "0")}
+                </span>
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
+                {unit.label}
               </span>
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
-              {unit.label}
-            </span>
-          </div>
-        ))}
+          ))}
+        </span>
       </div>
       <p className="mt-4 font-mono text-xs text-muted">
         Next call: {dateLabel} at {timeLabel}

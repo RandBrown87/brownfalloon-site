@@ -61,11 +61,14 @@ export default function Hero() {
       </div>
 
       <div className="mx-auto mt-8 grid max-w-2xl gap-3 text-left sm:grid-cols-2">
-        <div className="textured-panel rounded-xl border border-accent/50 p-4">
+        <Link
+          href="/recipes"
+          className="textured-panel rounded-xl border border-accent/50 p-4 transition-colors hover:border-accent"
+        >
           <p className="font-mono text-[10px] uppercase tracking-widest text-accent">next up</p>
           <p className="mt-2 font-display text-lg font-semibold text-ink">{nextCall.entry.host}</p>
           <p className="text-sm text-muted">{nextCall.entry.month} · {nextDateLabel}</p>
-        </div>
+        </Link>
         <Link href="/recipes#archive" className="textured-panel rounded-xl border border-line p-4 transition-colors hover:border-accent">
           <p className="font-mono text-[10px] uppercase tracking-widest text-accent">last month</p>
           <p className="mt-2 font-display text-lg font-semibold text-ink">{lastDrink?.drink ?? "The first pour"}</p>
