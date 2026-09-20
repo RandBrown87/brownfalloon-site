@@ -12,6 +12,7 @@ type Photo = {
 export default function Gallery() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [deletingPath, setDeletingPath] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -47,6 +48,25 @@ export default function Gallery() {
     }
   };
 
+  const handleDelete = async (photo: Photo) => {
+    if (!window.confirm(`Delete "${photo.caption}" from the gallery?`)) return;
+
+    setDeletingPath(photo.pathname);
+    setError("");
+
+    try {
+      const response = await fetch(`/api/gallery?pathname=${encodeURIComponent(photo.pathname)}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Delete failed");
+      setPhotos((current) => current.filter((item) => item.pathname !== photo.pathname));
+    } catch {
+      setError("That photo could not be deleted.");
+    } finally {
+      setDeletingPath("");
+    }
+  };
+
   return (
     <section className="mx-auto max-w-content px-6 pb-24 pt-40 lg:pt-48">
       <p className="font-mono text-xs uppercase tracking-widest text-gold">
@@ -60,8 +80,8 @@ export default function Gallery() {
         here.
       </p>
 
-      <div className="paper-panel mt-10 rounded-2xl border-2 border-dashed border-gold/70 p-10 text-center text-bg">
-        <p className="text-sm text-bg/75">Add a photo from this month&apos;s call.</p>
+      <div className="textured-panel mt-10 rounded-2xl border-2 border-dashed border-gold/70 p-10 text-center text-ink">
+        <p className="text-sm text-muted">Add a photo from this month&apos;s call.</p>
         <label className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-full bg-accent px-6 py-3 font-mono text-xs uppercase tracking-widest text-surface transition-opacity hover:opacity-90">
           {isUploading ? "Uploading..." : "Add photos"}
           <input
@@ -82,9 +102,9 @@ export default function Gallery() {
         </p>
       ) : (
         <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {photos.map((photo, index) => (
+            {photos.map((photo) => (
               <div
-              key={index}
+              key={photo.pathname}
                 className="relative aspect-square overflow-hidden rounded-xl border border-gold/50 bg-surface shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -96,6 +116,14 @@ export default function Gallery() {
               <div className="absolute inset-x-0 bottom-0 truncate bg-ink/70 px-2 py-1 font-mono text-[11px] text-surface">
                 {photo.caption}
               </div>
+              <button
+                type="button"
+                onClick={() => handleDelete(photo)}
+                disabled={deletingPath === photo.pathname}
+                className="absolute right-2 top-2 rounded-full bg-bg/85 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-ink transition-colors hover:bg-accent hover:text-surface disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {deletingPath === photo.pathname ? "Deleting..." : "Delete"}
+              </button>
             </div>
           ))}
         </div>
