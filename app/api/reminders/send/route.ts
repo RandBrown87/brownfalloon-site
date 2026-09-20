@@ -37,7 +37,8 @@ export async function GET(request: NextRequest) {
     for (const reminder of REMINDER_OFFSETS) {
       const reminderTime = call.date.getTime() - reminder.milliseconds;
       const reminderKey = `${call.date.toISOString()}:${reminder.key}`;
-      const isDue = now >= reminderTime && now - reminderTime <= 15 * 60 * 1000;
+      // Hobby cron runs once daily, so process reminders that became due since the last run.
+      const isDue = now >= reminderTime && now - reminderTime <= 24 * 60 * 60 * 1000;
 
       if (!isDue || settings.sent[reminderKey]) continue;
 

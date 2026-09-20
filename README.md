@@ -30,8 +30,8 @@ unavailable.
 ## Email reminders
 
 The admin page stores the reminder recipient list in the private Blob at
-`brownfaloon/reminder-settings.json`. Vercel Cron checks every five minutes and
-sends reminders 7 days, 1 day, and 1 hour before the scheduled call. Add these
+`brownfaloon/reminder-settings.json`. Vercel Hobby Cron checks once per day and
+processes reminders 7 days and 1 day before the scheduled call. Add these
 SMTP environment variables in Vercel Preview and Production:
 
 ```text
@@ -47,7 +47,9 @@ For Gmail, use `smtp.gmail.com`, port `465`, your Gmail address, and a Google
 app password. Do not use your normal Gmail password. Outlook and other SMTP
 providers can use their own host and port values. After adding the variables,
 redeploy the project. Then unlock `/admin`, add one recipient email per line,
-and save the reminder list.
+and save the reminder list. Hobby Cron timing is approximate. Exact timing
+requires Vercel Pro or an external scheduler that can call
+`/api/reminders/send` more frequently.
 
 The admin passcode is currently a browser-side family gate, not server-side
 authentication. Protect the `/admin` route and `/api/site-data` write/delete

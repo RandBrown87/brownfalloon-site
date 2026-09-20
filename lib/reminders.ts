@@ -5,7 +5,6 @@ export const REMINDER_SETTINGS_PATH = "brownfaloon/reminder-settings.json";
 export const REMINDER_OFFSETS = [
   { key: "7-days", label: "7 days", milliseconds: 7 * 24 * 60 * 60 * 1000 },
   { key: "1-day", label: "1 day", milliseconds: 24 * 60 * 60 * 1000 },
-  { key: "1-hour", label: "1 hour", milliseconds: 60 * 60 * 1000 },
 ] as const;
 
 export type ReminderSettings = {

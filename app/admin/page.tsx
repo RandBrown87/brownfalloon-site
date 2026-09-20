@@ -444,7 +444,7 @@ export default function AdminPage() {
         <div className="mt-8 border-t border-line pt-6">
           <h3 className="font-display text-xl text-ink">Email reminders</h3>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-            Add one email address per line. Each address receives reminders 7 days, 1 day, and 1 hour before the scheduled call.
+            Add one email address per line. Each address receives reminders 7 days and 1 day before the scheduled call.
           </p>
           <textarea
             value={reminderEmails}
