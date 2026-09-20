@@ -25,10 +25,30 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const [saveMessage, setSaveMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [reminderEmails, setReminderEmails] = useState("");
+  const [reminderMessage, setReminderMessage] = useState("");
+  const [isSavingReminders, setIsSavingReminders] = useState(false);
+  const [isSendingTest, setIsSendingTest] = useState(false);
 
   useEffect(() => {
     setDraft(data);
   }, [data]);
+
+  useEffect(() => {
+    if (!isUnlocked) return;
+
+    fetch("/api/reminders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ passcode: password }),
+    })
+      .then(async (response) => {
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Reminder list could not be loaded.");
+        setReminderEmails(result.recipients.join("\n"));
+      })
+      .catch((error) => setReminderMessage(error instanceof Error ? error.message : "Reminder list could not be loaded."));
+  }, [isUnlocked, password]);
 
   const handleUnlock = (event: React.FormEvent) => {
     event.preventDefault();
@@ -96,6 +116,50 @@ export default function AdminPage() {
     const reset = defaultSiteData;
     setDraft(reset);
     await resetData();
+  };
+
+  const handleSaveReminders = async () => {
+    setIsSavingReminders(true);
+    setReminderMessage("");
+
+    try {
+      const response = await fetch("/api/reminders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          passcode: password,
+          recipients: reminderEmails.split("\n"),
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Reminder list could not be saved.");
+      setReminderEmails(result.recipients.join("\n"));
+      setReminderMessage("Reminder list saved.");
+    } catch (error) {
+      setReminderMessage(error instanceof Error ? error.message : "Reminder list could not be saved.");
+    } finally {
+      setIsSavingReminders(false);
+    }
+  };
+
+  const handleSendTest = async () => {
+    setIsSendingTest(true);
+    setReminderMessage("");
+
+    try {
+      const response = await fetch("/api/reminders/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passcode: password }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Test email could not be sent.");
+      setReminderMessage("Test email sent.");
+    } catch (error) {
+      setReminderMessage(error instanceof Error ? error.message : "Test email could not be sent.");
+    } finally {
+      setIsSendingTest(false);
+    }
   };
 
   if (!isUnlocked) {
@@ -375,6 +439,39 @@ export default function AdminPage() {
               className="mt-1 w-full rounded-lg border border-line bg-bg px-3 py-2 text-ink"
             />
           </label>
+        </div>
+
+        <div className="mt-8 border-t border-line pt-6">
+          <h3 className="font-display text-xl text-ink">Email reminders</h3>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+            Add one email address per line. Each address receives reminders 7 days, 1 day, and 1 hour before the scheduled call.
+          </p>
+          <textarea
+            value={reminderEmails}
+            onChange={(event) => setReminderEmails(event.target.value)}
+            placeholder="family@example.com"
+            rows={5}
+            className="mt-4 w-full max-w-2xl rounded-lg border border-line bg-bg px-3 py-2 font-mono text-sm text-ink"
+          />
+          <div className="mt-3 flex flex-wrap items-center gap-4">
+            <button
+              type="button"
+              onClick={handleSaveReminders}
+              disabled={isSavingReminders}
+              className="rounded-full bg-accent px-5 py-2 font-mono text-xs uppercase tracking-widest text-surface disabled:opacity-50"
+            >
+              {isSavingReminders ? "Saving..." : "Save reminder list"}
+            </button>
+            <button
+              type="button"
+              onClick={handleSendTest}
+              disabled={isSendingTest || isSavingReminders}
+              className="rounded-full border border-line px-5 py-2 font-mono text-xs uppercase tracking-widest text-ink disabled:opacity-50"
+            >
+              {isSendingTest ? "Sending..." : "Send test email"}
+            </button>
+            <p aria-live="polite" className="text-sm text-accent">{reminderMessage}</p>
+          </div>
         </div>
 
         <div className="mt-6">

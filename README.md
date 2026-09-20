@@ -27,6 +27,28 @@ under `brownfaloon/gallery/`, with a private `gallery/index.json` manifest.
 Local browser storage is only used as a fallback when the site data API is
 unavailable.
 
+## Email reminders
+
+The admin page stores the reminder recipient list in the private Blob at
+`brownfaloon/reminder-settings.json`. Vercel Cron checks every five minutes and
+sends reminders 7 days, 1 day, and 1 hour before the scheduled call. Add these
+SMTP environment variables in Vercel Preview and Production:
+
+```text
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=your-gmail-address@gmail.com
+SMTP_PASSWORD=your-google-app-password
+REMINDER_FROM_EMAIL=Brownfalloon <your-gmail-address@gmail.com>
+CRON_SECRET=use-a-long-random-value
+```
+
+For Gmail, use `smtp.gmail.com`, port `465`, your Gmail address, and a Google
+app password. Do not use your normal Gmail password. Outlook and other SMTP
+providers can use their own host and port values. After adding the variables,
+redeploy the project. Then unlock `/admin`, add one recipient email per line,
+and save the reminder list.
+
 The admin passcode is currently a browser-side family gate, not server-side
 authentication. Protect the `/admin` route and `/api/site-data` write/delete
 operations with real server authentication before using this for sensitive
